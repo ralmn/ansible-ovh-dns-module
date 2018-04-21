@@ -124,7 +124,7 @@ def main():
             domain = dict(required=True),
             entries = dict(required=True, type='list'),
             state =  dict(default='present', choices=['present', 'delete', 'overwrite']),
-            type = dict(default='A', choices=['A', 'AAAA']),
+            type = dict(default='A', choices=['A', 'AAAA', 'CNAME']),
             endpoint = dict(required=True),
             application_key = dict(required=True, no_log=True),
             application_secret = dict(required=True, no_log=True),
