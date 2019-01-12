@@ -107,6 +107,9 @@ def get_sub_domain(domain):
 def sameEntry(record1, record2):
     return record1['target'] == record2['target'] and record1['fieldType'] == record2['fieldType']
 
+def sameType(record1, record2):
+    return record1['fieldType'] == record2['fieldType']
+
 def createRecord(domain, subDomain, record, ovhClient):
     #print(record)
     #print(dict(fieldType=record['fieldType'], target=record['target'], subDomain=subDomain))
@@ -187,7 +190,7 @@ def main():
             if bool(planned):
                 for p in planned:
                     p['created'] = True
-            else:
+            elif record['fieldType'] != dnsType and not (record['fieldType'] in ['A', 'AAAA']) and not dnsType in ['A', 'AAAA']:
                 deleteRecord(real_base_domain, record['id'], ovhClient)
                 result['changed'] = True
         for record in plannedRecords:
@@ -205,6 +208,9 @@ def main():
                     #print(error, file=sys.stdout)
                     module.fail_json(msg="Failed to delte record... {} {}".format(real_base_domain,r['id']))
                 result['changed'] = True
+
+    if result['changed']:
+        ovhClient.post('/domain/zone/{}/refresh'.format(real_base_domain))
 
     module.exit_json(message=str(module), **result)
 
