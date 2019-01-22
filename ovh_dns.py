@@ -190,7 +190,7 @@ def main():
             if bool(planned):
                 for p in planned:
                     p['created'] = True
-            elif record['fieldType'] != dnsType and not (record['fieldType'] in ['A', 'AAAA']) and not dnsType in ['A', 'AAAA']:
+            elif record['fieldType'] == dnsType:
                 deleteRecord(real_base_domain, record['id'], ovhClient)
                 result['changed'] = True
         for record in plannedRecords:
@@ -212,7 +212,7 @@ def main():
     if result['changed']:
         ovhClient.post('/domain/zone/{}/refresh'.format(real_base_domain))
 
-    module.exit_json(message=str(module), **result)
+    module.exit_json(message="setup for domain %s (sub : %s) "  %(real_base_domain, subdomain), **result)
 
 from ansible.module_utils.basic import *  # noqa
 if __name__ == '__main__':
